@@ -1,0 +1,29 @@
+# Vagrant
+.vagrant/
+
+# Java build output
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Packer build output
+*.box
+packer_cache/
+packer-manifest.json
