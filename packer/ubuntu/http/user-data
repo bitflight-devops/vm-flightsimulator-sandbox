@@ -1,0 +1,59 @@
+#cloud-config
+autoinstall:
+  version: 1
+
+  # Locale and keyboard
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+    variant: ""
+
+  # Network — DHCP during install; Vagrant configures static IP via provisioning
+  network:
+    version: 2
+    ethernets:
+      enp0s3:
+        dhcp4: true
+
+  # Storage — entire first disk, no LVM (simpler, faster provisioning)
+  storage:
+    layout:
+      name: direct
+
+  # Identity
+  identity:
+    hostname: ubuntu-jammy
+    username: vagrant
+    # Password hash for "vagrant".  Generated with:
+    #   openssl passwd -6 vagrant
+    password: "$6$rounds=4096$sT4/ETD7kPy02S$g1fE.UJqB1pCF8v9NObDm4bPrr.CeTyc3mX/VxRmm91v6LIUy5hDFf/DJJP9abTb0fNPwU.5k9JN0IOUB2bN5/"
+
+  # SSH
+  ssh:
+    install-server: true
+    allow-pw: true
+    authorized-keys:
+      # Standard Vagrant insecure public key
+      - "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE4GsFGs= vagrant insecure key"
+
+  # Packages installed during the OS install phase
+  packages:
+    - openssh-server
+    - curl
+    - wget
+    - ca-certificates
+    - apt-transport-https
+    - gnupg
+
+  # Run commands at the end of the install, before first boot
+  late-commands:
+    # Allow vagrant user to sudo without a password
+    - echo 'vagrant ALL=(ALL) NOPASSWD: ALL' > /target/etc/sudoers.d/vagrant
+    - chmod 0440 /target/etc/sudoers.d/vagrant
+    # Disable cloud-init on subsequent boots (not needed after initial provisioning)
+    - touch /target/etc/cloud/cloud-init.disabled
+
+  # Reboot automatically when the install finishes
+  user-data:
+    power_state:
+      mode: reboot

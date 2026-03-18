@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Windows Server 2022 Standard (Evaluation) unattended installation answer file.
+
+  This file is placed on a floppy disk (A:\autounattend.xml) by Packer.
+  Windows Setup reads it automatically at boot.
+
+  Key configuration:
+  - Installs Windows Server 2022 Standard (Evaluation) — index 1
+  - Wipes the entire first disk and creates a single NTFS partition
+  - Sets Administrator and vagrant passwords to "vagrant"
+  - Auto-logs in as Administrator after setup
+  - Enables and configures WinRM for Packer and Vagrant communication
+  - Disables Windows Firewall rules that would block WinRM
+-->
+<unattend xmlns="urn:schemas-microsoft-com:unattend">
+
+  <!-- ===================================================================
+       windowsPE — runs inside the Windows Preinstallation Environment
+       =================================================================== -->
+  <settings pass="windowsPE">
+
+    <component name="Microsoft-Windows-International-Core-WinPE"
+               processorArchitecture="amd64"
+               publicKeyToken="31bf3856ad364e35"
+               language="neutral"
+               versionScope="nonSxS"
+               xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <SetupUILanguage>
+        <UILanguage>en-US</UILanguage>
+      </SetupUILanguage>
+      <InputLocale>en-US</InputLocale>
+      <SystemLocale>en-US</SystemLocale>
+      <UILanguage>en-US</UILanguage>
+      <UILanguageFallback>en-US</UILanguageFallback>
+      <UserLocale>en-US</UserLocale>
+    </component>
+
+    <component name="Microsoft-Windows-Setup"
+               processorArchitecture="amd64"
+               publicKeyToken="31bf3856ad364e35"
+               language="neutral"
+               versionScope="nonSxS"
+               xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+      <!-- Accept the evaluation license -->
+      <UserData>
+        <AcceptEula>true</AcceptEula>
+      </UserData>
+
+      <!-- Select Windows Server 2022 Standard (Evaluation) — index 1 -->
+      <ImageInstall>
+        <OSImage>
+          <InstallFrom>
+            <MetaData wcm:action="add">
+              <Key>/IMAGE/INDEX</Key>
+              <Value>1</Value>
+            </MetaData>
+          </InstallFrom>
+          <InstallTo>
+            <DiskID>0</DiskID>
+            <PartitionID>2</PartitionID>
+          </InstallTo>
+        </OSImage>
+      </ImageInstall>
+
+      <!-- Disk layout: wipe disk 0, create a single NTFS partition -->
+      <DiskConfiguration>
+        <Disk wcm:action="add">
+          <DiskID>0</DiskID>
+          <WillWipeDisk>true</WillWipeDisk>
+          <CreatePartitions>
+            <!-- System reserved (EFI / boot) -->
+            <CreatePartition wcm:action="add">
+              <Order>1</Order>
+              <Type>EFI</Type>
+              <Size>100</Size>
+            </CreatePartition>
+            <!-- MSR -->
+            <CreatePartition wcm:action="add">
+              <Order>2</Order>
+              <Type>MSR</Type>
+              <Size>128</Size>
+            </CreatePartition>
+            <!-- Primary — use all remaining disk space -->
+            <CreatePartition wcm:action="add">
+              <Order>3</Order>
+              <Type>Primary</Type>
+              <Extend>true</Extend>
+            </CreatePartition>
+          </CreatePartitions>
+          <ModifyPartitions>
+            <ModifyPartition wcm:action="add">
+              <Order>1</Order>
+              <PartitionID>1</PartitionID>
+              <Format>FAT32</Format>
+              <Label>System</Label>
+            </ModifyPartition>
+            <ModifyPartition wcm:action="add">
+              <Order>2</Order>
+              <PartitionID>2</PartitionID>
+              <!-- MSR — no format -->
+            </ModifyPartition>
+            <ModifyPartition wcm:action="add">
+              <Order>3</Order>
+              <PartitionID>3</PartitionID>
+              <Format>NTFS</Format>
+              <Label>Windows</Label>
+              <Letter>C</Letter>
+            </ModifyPartition>
+          </ModifyPartitions>
+        </Disk>
+      </DiskConfiguration>
+
+    </component>
+  </settings>
+
+  <!-- ===================================================================
+       specialize — first boot after installation, before logon
+       =================================================================== -->
+  <settings pass="specialize">
+
+    <component name="Microsoft-Windows-Shell-Setup"
+               processorArchitecture="amd64"
+               publicKeyToken="31bf3856ad364e35"
+               language="neutral"
+               versionScope="nonSxS"
+               xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <ComputerName>windows-server</ComputerName>
+      <TimeZone>UTC</TimeZone>
+    </component>
+
+    <component name="Microsoft-Windows-International-Core"
+               processorArchitecture="amd64"
+               publicKeyToken="31bf3856ad364e35"
+               language="neutral"
+               versionScope="nonSxS"
+               xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <InputLocale>en-US</InputLocale>
+      <SystemLocale>en-US</SystemLocale>
+      <UILanguage>en-US</UILanguage>
+      <UserLocale>en-US</UserLocale>
+    </component>
+
+  </settings>
+
+  <!-- ===================================================================
+       oobeSystem — Out-of-Box Experience configuration
+       =================================================================== -->
+  <settings pass="oobeSystem">
+
+    <component name="Microsoft-Windows-Shell-Setup"
+               processorArchitecture="amd64"
+               publicKeyToken="31bf3856ad364e35"
+               language="neutral"
+               versionScope="nonSxS"
+               xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+      <!-- Skip OOBE wizard screens -->
+      <OOBE>
+        <HideEULAPage>true</HideEULAPage>
+        <HideLocalAccountScreen>true</HideLocalAccountScreen>
+        <HideOEMRegistrationScreen>true</HideOEMRegistrationScreen>
+        <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
+        <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
+        <NetworkLocation>Work</NetworkLocation>
+        <ProtectYourPC>3</ProtectYourPC>
+        <SkipMachineOOBE>true</SkipMachineOOBE>
+        <SkipUserOOBE>true</SkipUserOOBE>
+      </OOBE>
+
+      <!-- Administrator password -->
+      <UserAccounts>
+        <AdministratorPassword>
+          <Value>vagrant</Value>
+          <PlainText>true</PlainText>
+        </AdministratorPassword>
+        <!-- Create a vagrant local account -->
+        <LocalAccounts>
+          <LocalAccount wcm:action="add">
+            <Password>
+              <Value>vagrant</Value>
+              <PlainText>true</PlainText>
+            </Password>
+            <Description>Vagrant management account</Description>
+            <DisplayName>vagrant</DisplayName>
+            <Group>Administrators</Group>
+            <Name>vagrant</Name>
+          </LocalAccount>
+        </LocalAccounts>
+      </UserAccounts>
+
+      <!-- Auto-logon as Administrator for the FirstLogonCommands below -->
+      <AutoLogon>
+        <Password>
+          <Value>vagrant</Value>
+          <PlainText>true</PlainText>
+        </Password>
+        <Enabled>true</Enabled>
+        <Username>Administrator</Username>
+        <LogonCount>1</LogonCount>
+      </AutoLogon>
+
+      <!--
+        FirstLogonCommands — run once as Administrator on first logon.
+        These commands enable WinRM (required for Packer provisioning and
+        Vagrant communication) and open the firewall rules.
+      -->
+      <FirstLogonCommands>
+
+        <!-- 1. Enable WinRM service and set to auto-start -->
+        <SynchronousCommand wcm:action="add">
+          <Order>1</Order>
+          <Description>Enable WinRM service</Description>
+          <CommandLine>cmd /c sc config WinRM start= auto</CommandLine>
+          <RequiresUserInput>false</RequiresUserInput>
+        </SynchronousCommand>
+
+        <!-- 2. Run winrm quickconfig (enables HTTP listener, sets up service) -->
+        <SynchronousCommand wcm:action="add">
+          <Order>2</Order>
+          <Description>Configure WinRM</Description>
+          <CommandLine>cmd /c winrm quickconfig -q</CommandLine>
+          <RequiresUserInput>false</RequiresUserInput>
+        </SynchronousCommand>
+
+        <!-- 3. Allow Basic authentication (plain credentials over HTTP for Packer) -->
+        <SynchronousCommand wcm:action="add">
+          <Order>3</Order>
+          <Description>Enable WinRM Basic auth</Description>
+          <CommandLine>cmd /c winrm set winrm/config/service/auth @{Basic="true"}</CommandLine>
+          <RequiresUserInput>false</RequiresUserInput>
+        </SynchronousCommand>
+
+        <!-- 4. Allow unencrypted traffic (required for Packer WinRM over HTTP) -->
+        <SynchronousCommand wcm:action="add">
+          <Order>4</Order>
+          <Description>Allow WinRM unencrypted</Description>
+          <CommandLine>cmd /c winrm set winrm/config/service @{AllowUnencrypted="true"}</CommandLine>
+          <RequiresUserInput>false</RequiresUserInput>
+        </SynchronousCommand>
+
+        <!-- 5. Increase WinRM MaxTimeoutms to 2 hours for long provisioning runs -->
+        <SynchronousCommand wcm:action="add">
+          <Order>5</Order>
+          <Description>Increase WinRM timeout</Description>
+          <CommandLine>cmd /c winrm set winrm/config @{MaxTimeoutms="7200000"}</CommandLine>
+          <RequiresUserInput>false</RequiresUserInput>
+        </SynchronousCommand>
+
+        <!-- 6. Open WinRM HTTP port (5985) in Windows Firewall -->
+        <SynchronousCommand wcm:action="add">
+          <Order>6</Order>
+          <Description>Open WinRM firewall port 5985</Description>
+          <CommandLine>cmd /c netsh advfirewall firewall add rule name="WinRM HTTP" protocol=TCP dir=in localport=5985 action=allow</CommandLine>
+          <RequiresUserInput>false</RequiresUserInput>
+        </SynchronousCommand>
+
+        <!-- 7. Disable Windows Firewall on the private network profile
+             (Vagrant host-only adapter uses the Private profile).
+             This avoids firewall blocks on WinRM, ICMP, and application ports
+             in the test environment. -->
+        <SynchronousCommand wcm:action="add">
+          <Order>7</Order>
+          <Description>Disable firewall on private profile</Description>
+          <CommandLine>cmd /c netsh advfirewall set privateprofile state off</CommandLine>
+          <RequiresUserInput>false</RequiresUserInput>
+        </SynchronousCommand>
+
+        <!-- 8. Start WinRM service now -->
+        <SynchronousCommand wcm:action="add">
+          <Order>8</Order>
+          <Description>Start WinRM service</Description>
+          <CommandLine>cmd /c net start WinRM</CommandLine>
+          <RequiresUserInput>false</RequiresUserInput>
+        </SynchronousCommand>
+
+      </FirstLogonCommands>
+    </component>
+  </settings>
+
+</unattend>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Pet Name Poll</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #a8d8ea;
+            border-bottom: 2px solid #2a2a5e;
+            padding-bottom: 0.5rem;
+        }
+
+        ul {
+            list-style: none;
+            max-width: 480px;
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #2a2a4e;
+        }
+
+        .pet-name {
+            font-weight: bold;
+            min-width: 120px;
+            color: #f0f0f0;
+        }
+
+        .vote-count {
+            min-width: 60px;
+            text-align: right;
+            color: #a8d8ea;
+            font-size: 0.95rem;
+        }
+
+        form {
+            margin-left: 1rem;
+        }
+
+        button {
+            background-color: #2ecc71;
+            color: #1a1a2e;
+            border: none;
+            padding: 0.35rem 0.9rem;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background-color 0.15s;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+        }
+
+        .footer-note {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #6a6a9e;
+        }
+    </style>
+</head>
+<body>
+    <h1>Vote for Your Favourite Pet Name</h1>
+
+    <ul>
+        <li th:each="v : ${votes}">
+            <span class="pet-name" th:text="${v.petName()}">Pet</span>
+            <span class="vote-count" th:text="${v.count()} + ' votes'">0 votes</span>
+            <form method="post" th:action="@{/vote}">
+                <input type="hidden" name="petName" th:value="${v.petName()}"/>
+                <button type="submit">Vote</button>
+            </form>
+        </li>
+    </ul>
+
+    <p class="footer-note">Votes are persisted to PostgreSQL on 192.168.56.10</p>
+</body>
+</html>

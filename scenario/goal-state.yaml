@@ -1,0 +1,70 @@
+scenario_name: petpoll-e2e
+description: >
+  Two-VM petpoll verification scenario. Ubuntu VM runs PostgreSQL 16 as
+  database backend. Windows VM runs Java 21 + Tomcat 10.1 with the petpoll
+  Spring Boot app deployed. Verifies cross-VM networking, service provisioning,
+  WAR deployment, and database persistence.
+
+fail_fast: true
+
+vms:
+  - vm_name: petpoll-db  # Ubuntu VM
+    checks:
+      - key: os_version
+        expected: "Ubuntu 22.04"
+        verify_cmd: "lsb_release -d"
+      - key: ip_address
+        expected: "192.168.56.10"
+        verify_cmd: "ip addr show | grep 192.168.56"
+      - key: postgres_running
+        expected: "active"
+        verify_cmd: "systemctl is-active postgresql"
+      - key: postgres_version
+        expected: "16"
+        verify_cmd: "psql --version"
+      - key: petpoll_db_exists
+        expected: "petpoll"
+        verify_cmd: "psql -U postgres -tAc \"SELECT datname FROM pg_database WHERE datname='petpoll'\""
+      - key: votes_row_count
+        expected: "20"
+        verify_cmd: "psql -U petpoll_user -d petpoll -tAc 'SELECT COUNT(*) FROM votes'"
+        env:
+          PGPASSWORD: petpoll_pass
+      - key: ping_windows
+        expected: "0"
+        verify_cmd: "ping -c1 192.168.56.11 > /dev/null 2>&1; echo $?"
+
+  - vm_name: petpoll-app  # Windows VM
+    checks:
+      - key: os_version
+        expected: "Windows Server 2022"
+        verify_cmd: "(Get-WmiObject Win32_OperatingSystem).Caption"
+        shell: powershell
+      - key: ip_address
+        expected: "192.168.56.11"
+        verify_cmd: "(Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -like '192.168.56*'}).IPAddress"
+        shell: powershell
+      - key: java_version
+        expected: "21"
+        verify_cmd: "java -version 2>&1"
+        shell: powershell
+      - key: tomcat_service_running
+        expected: "Running"
+        verify_cmd: "(Get-Service -Name Tomcat10).Status"
+        shell: powershell
+      - key: tomcat_port_open
+        expected: "200"
+        verify_cmd: "(Invoke-WebRequest -Uri http://localhost:8595/ -UseBasicParsing).StatusCode"
+        shell: powershell
+      - key: petpoll_deployed
+        expected: "200"
+        verify_cmd: "(Invoke-WebRequest -Uri http://localhost:8595/petpoll/ -UseBasicParsing).StatusCode"
+        shell: powershell
+      - key: petpoll_shows_luna
+        expected: "True"
+        verify_cmd: "(Invoke-WebRequest -Uri http://localhost:8595/petpoll/ -UseBasicParsing).Content.Contains('Luna')"
+        shell: powershell
+      - key: ping_ubuntu
+        expected: "True"
+        verify_cmd: "Test-Connection -ComputerName 192.168.56.10 -Count 1 -Quiet"
+        shell: powershell
