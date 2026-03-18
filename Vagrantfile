@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
     ubuntu.vm.network "private_network", ip: "192.168.56.10"
 
     ubuntu.vm.provider "virtualbox" do |vb|
-      vb.name   = "ubuntu"
+      vb.name   = "petpoll-db"
       vb.memory = 1024
       vb.cpus   = 1
     end
@@ -45,7 +45,7 @@ Vagrant.configure("2") do |config|
     windows.winrm.password  = "vagrant"
 
     windows.vm.provider "virtualbox" do |vb|
-      vb.name   = "windows"
+      vb.name   = "petpoll-app"
       vb.memory = 4096
       vb.cpus   = 2
     end

@@ -25,6 +25,21 @@ Before starting any VM, confirm all host prerequisites are satisfied:
 If any pre-flight check fails, stop and report the failure before bringing up
 any VM.
 
+### Goal state commitment (required before Phase 1)
+
+`vm_run_scenario` raises a ToolError if no committed goal criteria exist for
+the `vm_name` / `scenario_name` pair. Goal state must be committed via
+`vm_goal_interview` for **both** VMs before proceeding to Phase 1.
+
+Follow `SETUP.md` for the exact sequence: build the WAR, bring up the VMs,
+confirm VirtualBox names via `vm_list()`, then call `vm_goal_interview` for
+`petpoll-db / petpoll-e2e` and `petpoll-app / petpoll-e2e`. Use the checks
+in `goal-state.yaml` as the criteria for each VM.
+
+Skipping this step causes `vm_run_scenario` to fail immediately with a
+ToolError at the goal state gate. There is no retry path — the goal interview
+must be completed first.
+
 ---
 
 ## Phase 1 — Base VMs
