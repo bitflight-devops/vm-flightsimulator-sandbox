@@ -15,6 +15,9 @@ Vagrant.configure("2") do |config|
   # Ubuntu VM — petpoll-db (PostgreSQL)
   # ──────────────────────────────────────────────
   config.vm.define "ubuntu" do |ubuntu|
+    # ubuntu/jammy64 (22.04 LTS) is intentional — Canonical stopped publishing
+    # official Vagrant boxes from Ubuntu 24.04 onwards. Jammy is the newest
+    # official Ubuntu Vagrant box and remains supported until April 2027.
     ubuntu.vm.box              = "ubuntu/jammy64"
     ubuntu.vm.box_version      = "20240301.0.0"
     ubuntu.vm.box_check_update = false
