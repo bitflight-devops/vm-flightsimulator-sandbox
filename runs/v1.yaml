@@ -1,0 +1,11 @@
+version: 1
+branch: feature/evaluate-sandbox-v1
+worktree_path: ../sandbox-eval-v1
+status: active
+created_at: "2026-03-18T00:00:00+00:00"
+completed_at: null
+cleaned_at: null
+notes: "First evaluation run — validating fixtures are sufficient for AI orchestration"
+milestones_passed: []
+fixture_bugs_found: []
+evidence_archived: false
