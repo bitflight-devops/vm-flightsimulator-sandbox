@@ -76,6 +76,11 @@ Write-Host "==> Installing Tomcat as Windows service '$ServiceName'"
 $serviceBat = "$TomcatDir\bin\service.bat"
 # service.bat requires JAVA_HOME and CATALINA_HOME in the environment
 $env:CATALINA_HOME = $TomcatDir
+$existing = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
+if ($existing) {
+    Write-Host "==> Removing existing $ServiceName service (idempotent re-provision)"
+    & cmd.exe /c "`"$serviceBat`" remove $ServiceName"
+}
 & cmd.exe /c "`"$serviceBat`" install $ServiceName"
 if ($LASTEXITCODE -ne 0) {
     throw "service.bat install exited with code $LASTEXITCODE"
