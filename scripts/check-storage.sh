@@ -18,10 +18,18 @@ echo ""
 echo "── Disk free (home partition) ──────────────────────────────"
 df -h ~
 
-# Warn if disk free < 10 GB (10485760 KB)
+# Two-VM scenario space requirements:
+#   Ubuntu VM disk (petpoll-db):   ~3 GB
+#   Windows VM disk (petpoll-app): ~20 GB (box expands on import)
+#   Vagrant working files:         ~1 GB
+#   Build artifacts + scratch:     ~1 GB
+#   Total required:                ~25 GB free minimum
 FREE_KB=$(df ~ | awk 'NR==2 {print $4}')
-if [[ "${FREE_KB}" -lt 10485760 ]]; then
-	echo -e "${RED}WARNING: less than 10 GB free on home partition — risk of provisioning failure${NC}"
+if [[ "${FREE_KB}" -lt 26214400 ]]; then
+	echo -e "${RED}WARNING: less than 25 GB free — Windows VM disk (~20 GB) will exceed available space${NC}"
+	echo -e "${RED}         Free up space before running vagrant up for the two-VM scenario.${NC}"
+elif [[ "${FREE_KB}" -lt 10485760 ]]; then
+	echo -e "${RED}WARNING: less than 10 GB free — risk of provisioning failure${NC}"
 fi
 
 # ── Box vault ────────────────────────────────────────────────────────────────
