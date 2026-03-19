@@ -1,10 +1,10 @@
 version: 1
 branch: feature/evaluate-sandbox-v1
 worktree_path: ../sandbox-eval-v1
-status: abandoned
+status: cleaned
 created_at: "2026-03-18T00:00:00+00:00"
 completed_at: "2026-03-18T18:00:00+00:00"
-cleaned_at: null
+cleaned_at: "2026-03-19T04:00:00+00:00"
 notes: "Abandoned at Phase 0.2 — download-boxes.sh uses incorrect Vagrant Cloud URL pattern (/amd64/ segment). API returned {code:5, message:'architecture not found'}. Both vault files are 4KB JSON error responses, not valid .box files. Fixture bug filed and fixed on main before re-run."
 milestones_passed: []
 fixture_bugs_found:

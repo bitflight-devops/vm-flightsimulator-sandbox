@@ -102,11 +102,32 @@ active → completed | abandoned → cleaned
 
 ### Cleanup a run (only when status is completed or abandoned)
 
-1. Confirm `runs/vN.yaml` has `status: completed` or `status: abandoned` — never clean an active run.
-2. `cd ../sandbox-eval-vN && vagrant destroy -f`
-3. `cd /path/to/sandbox && git worktree remove ../sandbox-eval-vN --force`
-4. Update `runs/vN.yaml`: set `status: cleaned`, set `cleaned_at` to current ISO-8601 timestamp, commit to main, push.
-5. Optional: `git branch -d feature/evaluate-sandbox-vN` (keep the remote branch as history).
+**Outcome:** `runs/vN.yaml` on main shows `status: cleaned` AND no local worktree at `../sandbox-eval-vN` AND no running VMs for that run exist.
+
+**Entry condition:** `runs/vN.yaml` shows `status: completed` or `abandoned`. Never start cleanup on an `active` run.
+
+**When to clean:** Clean the previous run before or immediately after starting the next run number. Never let more than one run accumulate as `abandoned` without cleaning.
+
+```mermaid
+flowchart TD
+    START([START]) --> S1["1. Read runs/vN.yaml\nConfirm status is completed or abandoned"]
+    S1 --> CHECK_ACTIVE{status is active?}
+    CHECK_ACTIVE -->|YES| STOP([STOP — never clean an active run])
+    CHECK_ACTIVE -->|NO| S2{2. Does ../sandbox-eval-vN/ exist?}
+    S2 -->|NO| S5["Skip to step 5\n(nothing to destroy or remove)"]
+    S2 -->|YES| S3{"3. Were any VMs started?\nvagrant status in ../sandbox-eval-vN/\nreturns any 'running' VMs?"}
+    S3 -->|YES| DESTROY["vagrant destroy -f\nvia mcp__vm-blackbox__vagrant_destroy\nnot raw Bash"]
+    S3 -->|NO| S4
+    DESTROY --> S4["4. git worktree remove\n/absolute/path/to/sandbox-eval-vN --force"]
+    S4 --> S5
+    S5["5. Update runs/vN.yaml on main:\nstatus: cleaned\ncleaned_at: ISO-8601 now\nCommit and push to main"] --> S6
+    S6{"6. git branch --merged main\nincludes feature/evaluate-sandbox-vN?"} -->|YES — all work merged or abandoned confirmed| DELETE_LOCAL["git branch -d feature/evaluate-sandbox-vN\n(local only — keep remote permanently)"]
+    S6 -->|NO — unmerged fixture fixes remain| KEEP["Keep local branch\nDo not delete"]
+    DELETE_LOCAL --> DONE([DONE — runs/vN.yaml shows status: cleaned])
+    KEEP --> DONE
+```
+
+**Never delete the remote branch** — it is a permanent historical record of the evaluation run.
 
 ### Inspect state
 
