@@ -101,7 +101,7 @@ Set-Service -Name $ServiceName -StartupType Automatic
 Write-Host "==> Starting $ServiceName"
 Start-Service -Name $ServiceName
 
-# -- Step 6: Open firewall port 8595 -------------------------------------------
+# -- Step 6: Open firewall port 8595 and allow ICMP ----------------------------
 Write-Host "==> Opening firewall port $TomcatPort (TCP inbound)"
 $fwRuleName = "Tomcat $TomcatPort TCP"
 if (-not (Get-NetFirewallRule -DisplayName $fwRuleName -ErrorAction SilentlyContinue)) {
@@ -110,6 +110,18 @@ if (-not (Get-NetFirewallRule -DisplayName $fwRuleName -ErrorAction SilentlyCont
         -Direction    Inbound `
         -Protocol     TCP `
         -LocalPort    $TomcatPort `
+        -Action       Allow `
+        -Profile      Any | Out-Null
+}
+
+Write-Host "==> Allowing ICMPv4 echo requests (for cross-VM ping checks)"
+$icmpRuleName = "ICMP Allow IPv4"
+if (-not (Get-NetFirewallRule -DisplayName $icmpRuleName -ErrorAction SilentlyContinue)) {
+    New-NetFirewallRule `
+        -DisplayName  $icmpRuleName `
+        -Direction    Inbound `
+        -Protocol     ICMPv4 `
+        -IcmpType     8 `
         -Action       Allow `
         -Profile      Any | Out-Null
 }
