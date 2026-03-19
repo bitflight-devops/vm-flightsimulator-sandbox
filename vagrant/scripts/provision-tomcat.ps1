@@ -107,8 +107,7 @@ if (Test-Path $WarSource) {
     try {
         Copy-Item -Path $WarSource -Destination "$TomcatDir\webapps\petpoll.war" -Force
         Write-Host "  WAR deployed successfully"
-    }
-    catch {
+    } catch {
         Write-Host "  WARNING: WAR copy failed — $($_.Exception.Message)"
     }
 } else {
