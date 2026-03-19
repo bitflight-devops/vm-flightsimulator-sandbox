@@ -11,7 +11,7 @@ The repository must be fully cloned on a host with the following installed:
 
 | Tool | Minimum version | Install (Ubuntu/Debian) |
 |------|----------------|------------------------|
-| VirtualBox | 7.0 | `sudo apt install virtualbox` |
+| VirtualBox | 7.0 | `sudo apt install virtualbox` — also add `192.168.56.0/24` to `/etc/vbox/networks.conf` |
 | Vagrant | 2.3 | https://developer.hashicorp.com/vagrant/downloads |
 | Java JDK | 21 | `sudo apt install openjdk-21-jdk` (JDK required, not just JRE — `javac` must be available) |
 | Maven | 3.8 | `sudo apt install maven` |
