@@ -86,6 +86,20 @@ active → completed | abandoned → cleaned
 
 ### Start a new run
 
+**Gate — clean previous run first:**
+
+Before starting a new run, check that no uncleaned runs exist:
+
+```bash
+grep -h "status:" runs/v*.yaml
+```
+
+If any run shows `status: active`, `status: completed`, or `status: abandoned` (not `cleaned`):
+- `status: active` — hard stop. Do not start a new run. Resume or abandon the active run first.
+- `status: completed` or `status: abandoned` — follow the Cleanup process below before proceeding.
+
+Only proceed when all `runs/v*.yaml` files show `status: cleaned` (or no run files exist yet).
+
 1. Check `runs/v*.yaml` for the highest N. Increment to get the new N.
 2. `git switch main && git pull`
 3. `git switch -c feature/evaluate-sandbox-vN && git push -u origin feature/evaluate-sandbox-vN`

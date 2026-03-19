@@ -1,0 +1,92 @@
+# workflow.issue_register.yaml
+#
+# Real-time issue log for evaluate-sandbox runs.
+# Append one entry per issue immediately when discovered — do not batch.
+# Commit each entry to the evaluation branch before proceeding.
+# If the issue is a fixture bug, fix on main, then update status to resolved.
+#
+# Schema per entry:
+#   date:                  ISO-8601 timestamp when the issue was first observed
+#   run:                   evaluation run identifier (e.g. v1, v2)
+#   action_performed:      what was attempted when the issue occurred
+#   status:                open | resolved
+#   expected_outcome:      what should have happened
+#   what_was_observed:     exact error, output, or unexpected state
+#   additional_steps_taken: fix applied, workaround, or "none yet"
+#   fix_commit:            commit SHA on main that resolved the issue (if resolved)
+#
+# Issues found during v1 and v2 evaluation runs:
+
+- date: "2026-03-19T00:00:00Z"
+  run: v1
+  action_performed: >
+    vagrant up petpoll-app; provision-tomcat.ps1 executed via WinRM
+  status: resolved
+  expected_outcome: >
+    Tomcat provisioning script runs without parse errors on PowerShell 5.1
+  what_was_observed: >
+    PowerShell 5.1 on Windows Server 2022 via WinRM failed to parse the
+    provision-tomcat.ps1 script due to UTF-8 box-drawing characters
+    (U+2500 horizontal rule, used in comment separator lines). PS5.1 under
+    WinRM does not reliably handle multi-byte UTF-8 sequences in source files,
+    causing a parse error before any commands execute.
+  additional_steps_taken: >
+    Removed all box-drawing characters from provision-tomcat.ps1. Replaced
+    section separator lines (# ------...) and arrow characters (-->) with
+    plain ASCII equivalents. File now reports as ASCII text.
+  fix_commit: ""
+
+- date: "2026-03-19T00:00:00Z"
+  run: v2
+  action_performed: >
+    validate-scenario Phase 0 started without checking for previous run state
+  status: resolved
+  expected_outcome: >
+    Skill checks for existing active or uncleaned runs before creating a new
+    evaluation branch
+  what_was_observed: >
+    A second evaluation run was started while a previous run still had
+    status: abandoned in runs/vN.yaml. The worktree from the previous run
+    still existed locally. This caused confusion about which worktree was
+    current and left stale VirtualBox VM registrations that conflicted with
+    the new run's vagrant up.
+  additional_steps_taken: >
+    Added Phase 0.0 (clean previous run gate) to validate-scenario SKILL.md.
+    Added CHECK_CLEAN gate to sandbox CLAUDE.md Start process flowchart.
+  fix_commit: ""
+
+- date: "2026-03-19T00:00:00Z"
+  run: v2
+  action_performed: >
+    validate-scenario Phase 0 disk space check; vagrant up attempted
+  status: resolved
+  expected_outcome: >
+    vm_list() checked before vagrant up to detect conflicting VMs from
+    previous runs
+  what_was_observed: >
+    vagrant up failed with VirtualBox error because petpoll-db and petpoll-app
+    VM names were already registered in VirtualBox from an abandoned previous
+    run. The skill had no step to check for this condition.
+  additional_steps_taken: >
+    Added Phase 0.3b (check for conflicting running VMs via vm_list()) to
+    validate-scenario SKILL.md. Skill now stops and reports conflicting VM
+    names if either target VM already exists.
+  fix_commit: ""
+
+- date: "2026-03-19T00:00:00Z"
+  run: v2
+  action_performed: >
+    vm_powershell used to run commands on petpoll-app (Windows VM managed
+    by Vagrant)
+  status: resolved
+  expected_outcome: >
+    WinRM commands reach petpoll-app via the Vagrant-mapped port
+  what_was_observed: >
+    vm_powershell connects to 127.0.0.1:5985 (hardcoded default WinRM port).
+    Vagrant maps WinRM to a different local forwarded port (e.g. 55985).
+    Commands sent via vm_powershell timed out or connected to the wrong target.
+  additional_steps_taken: >
+    Added WinRM routing constraint to validate-scenario SKILL.md Hard
+    Constraints section: use vagrant_winrm for Vagrant-managed Windows VMs,
+    not vm_powershell.
+  fix_commit: ""
