@@ -7,13 +7,19 @@ Skipping any step causes `vm_run_scenario` to raise a ToolError.
 
 ## Step 1 — Clone and enter the repository
 
-The repository must be fully cloned on a host with VirtualBox ≥ 7.0 and
-Vagrant ≥ 2.3 installed. After cloning, all paths below are relative to the
-repository root.
+The repository must be fully cloned on a host with the following installed:
+
+| Tool | Minimum version | Install (Ubuntu/Debian) |
+|------|----------------|------------------------|
+| VirtualBox | 7.0 | `sudo apt install virtualbox` |
+| Vagrant | 2.3 | https://developer.hashicorp.com/vagrant/downloads |
+| Java JDK | 21 | `sudo apt install openjdk-21-jdk` |
+| Maven | 3.8 | `sudo apt install maven` |
+
+After cloning, all paths below are relative to the repository root.
 
 **Outcome**: The working directory contains `Vagrantfile`, `webapp/`, `vagrant/`,
-and `scenario/`. No files required by the Vagrantfile or provisioning scripts are
-missing.
+and `scenario/`. Running `mvn -version` reports Maven 3.8+ and Java 21.
 
 ---
 
