@@ -112,3 +112,20 @@
     via vagrant_winrm. Fixed provision-tomcat.ps1 on main to add
     sc.exe config step after service.bat install for all future runs.
   fix_commit: "c37af00"
+
+- date: "2026-03-19T05:36:00Z"
+  run: v3
+  action_performed: >
+    Phase 2 pilot ran ping -c1 192.168.56.11 from petpoll-db to verify
+    cross-VM connectivity
+  status: resolved
+  expected_outcome: >
+    petpoll-db can ping petpoll-app at 192.168.56.11 (ping_windows check exit code 0)
+  what_was_observed: >
+    100% packet loss. Windows Server 2022 blocks ICMPv4 echo requests by
+    default — no inbound ICMP firewall rule existed after provisioning.
+  additional_steps_taken: >
+    Created inbound ICMPv4 rule on petpoll-app via vagrant_winrm. Added the
+    same rule to provision-tomcat.ps1 on main (idempotent check before
+    New-NetFirewallRule).
+  fix_commit: "2ea8906"
