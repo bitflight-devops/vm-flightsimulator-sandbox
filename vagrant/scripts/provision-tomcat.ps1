@@ -86,6 +86,14 @@ if ($LASTEXITCODE -ne 0) {
     throw "service.bat install exited with code $LASTEXITCODE"
 }
 
+# service.bat registers the service as NT Authority\LocalService by default,
+# which lacks permission to load the JVM DLL. Change to LocalSystem.
+Write-Host "==> Setting $ServiceName service account to LocalSystem"
+& sc.exe config $ServiceName obj= "LocalSystem"
+if ($LASTEXITCODE -ne 0) {
+    throw "sc.exe config obj= LocalSystem exited with code $LASTEXITCODE"
+}
+
 # -- Step 5: Configure service to start automatically and start it --------------
 Write-Host "==> Setting $ServiceName to start automatically"
 Set-Service -Name $ServiceName -StartupType Automatic
