@@ -13,7 +13,7 @@ The repository must be fully cloned on a host with the following installed:
 |------|----------------|------------------------|
 | VirtualBox | 7.0 | `sudo apt install virtualbox` |
 | Vagrant | 2.3 | https://developer.hashicorp.com/vagrant/downloads |
-| Java JDK | 21 | `sudo apt install openjdk-21-jdk` |
+| Java JDK | 21 | `sudo apt install openjdk-21-jdk` (JDK required, not just JRE — `javac` must be available) |
 | Maven | 3.8 | `sudo apt install maven` |
 
 After cloning, all paths below are relative to the repository root.
