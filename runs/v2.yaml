@@ -1,11 +1,16 @@
 version: 2
 branch: feature/evaluate-sandbox-v2
 worktree_path: /home/ubuntulinuxqa2/repos/sandbox-eval-v2
-status: active
+status: abandoned
 created_at: "2026-03-19T00:24:00+00:00"
-completed_at: null
+completed_at: "2026-03-19T01:30:00+00:00"
 cleaned_at: null
-notes: "Second evaluation run — v1 abandoned after 3 fixture bugs in download-boxes.sh. All fixed on main before this run."
-milestones_passed: []
-fixture_bugs_found: []
+notes: "Abandoned at Phase 1.2 — disk full (12 GB free, need 25 GB). Windows VM import consumed ~11 GB before VERR_DISK_FULL. Ubuntu VM provisioned successfully. 5 additional fixture bugs found and fixed on main (Vagrantfile box_version+URL conflict, Maven/JDK prerequisites, VirtualBox network range, disk threshold)."
+milestones_passed: [2]
+fixture_bugs_found:
+  - "Vagrantfile: box_version incompatible with local file:// box_url"
+  - "SETUP.md: Maven not documented as prerequisite"
+  - "SETUP.md: JDK (javac) required, not just JRE"
+  - "SETUP.md: VirtualBox /etc/vbox/networks.conf must include 192.168.56.0/24"
+  - "check-storage.sh: 10 GB threshold too low — Windows VM needs 20 GB alone"
 evidence_archived: false
