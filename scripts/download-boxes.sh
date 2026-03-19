@@ -31,7 +31,8 @@ if [[ -f "${VAULT_DIR}/${UBUNTU_FILE}" ]]; then
 else
 	echo "    estimated size: ${UBUNTU_SIZE_HINT}"
 	echo "    downloading from Vagrant Cloud..."
-	curl -L --progress-bar \
+	curl -L --progress-bar --retry 5 --retry-delay 10 --retry-connrefused \
+		--continue-at - \
 		-o "${VAULT_DIR}/${UBUNTU_FILE}.tmp" \
 		"${UBUNTU_URL}"
 	actual_bytes=$(wc -c <"${VAULT_DIR}/${UBUNTU_FILE}.tmp")
@@ -55,7 +56,8 @@ if [[ -f "${VAULT_DIR}/${WINDOWS_FILE}" ]]; then
 else
 	echo "    estimated size: ${WINDOWS_SIZE_HINT}"
 	echo "    downloading from Vagrant Cloud..."
-	curl -L --progress-bar \
+	curl -L --progress-bar --retry 5 --retry-delay 10 --retry-connrefused \
+		--continue-at - \
 		-o "${VAULT_DIR}/${WINDOWS_FILE}.tmp" \
 		"${WINDOWS_URL}"
 	actual_bytes=$(wc -c <"${VAULT_DIR}/${WINDOWS_FILE}.tmp")
