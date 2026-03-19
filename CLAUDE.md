@@ -16,7 +16,7 @@ This repository is a **plugin verification harness** for the [vm-blackbox Claude
 | Constant | Value | Source |
 |----------|-------|--------|
 | Ubuntu base box | `ubuntu/jammy64` v20240301.0.0 | [Vagrant Cloud](https://app.vagrantup.com/ubuntu/boxes/jammy64) |
-| Windows base box | `gusztavvargadr/windows-server-2022-standard` v2202.0.2402 | [Vagrant Cloud](https://app.vagrantup.com/gusztavvargadr/boxes/windows-server-2022-standard) |
+| Windows base box | `gusztavvargadr/windows-server-2022-standard` v2601.0.0 | [Vagrant Cloud](https://app.vagrantup.com/gusztavvargadr/boxes/windows-server-2022-standard) |
 | Ubuntu VirtualBox VM name | `petpoll-db` | Vagrantfile `vb.name`; pass as `vm_name` to all `mcp__vm-blackbox__*` tools |
 | Windows VirtualBox VM name | `petpoll-app` | Vagrantfile `vb.name`; pass as `vm_name` to all `mcp__vm-blackbox__*` tools |
 | Private network subnet | `192.168.56.0/24` | Host-only adapter |
@@ -32,7 +32,7 @@ This repository is a **plugin verification harness** for the [vm-blackbox Claude
 | Application port | `8595` | Tomcat connector |
 | Host forwarded port | `8595` | Vagrantfile port forward |
 | Ubuntu box vault filename | `ubuntu-jammy64-20240301.0.0.box` | Box vault |
-| Windows box vault filename | `windows-server-2022-standard-2202.0.2402.box` | Box vault |
+| Windows box vault filename | `windows-server-2022-standard-2601.0.0.box` | Box vault |
 
 ---
 
@@ -51,7 +51,7 @@ Vagrant's internal cache. Freely prunable at any time. If pruned, Vagrant reimpo
 | Box | Vault filename |
 |-----|----------------|
 | Ubuntu 22.04 | `ubuntu-jammy64-20240301.0.0.box` |
-| Windows Server 2022 | `windows-server-2022-standard-2202.0.2402.box` |
+| Windows Server 2022 | `windows-server-2022-standard-2601.0.0.box` |
 
 ### How Vagrant uses the vault
 

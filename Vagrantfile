@@ -8,7 +8,7 @@
 # To populate the vault: bash scripts/download-boxes.sh
 BOX_VAULT = File.expand_path("~/vagrant-box-vault")
 UBUNTU_BOX_FILE  = "ubuntu-jammy64-20240301.0.0.box"
-WINDOWS_BOX_FILE = "windows-server-2022-standard-2202.0.2402.box"
+WINDOWS_BOX_FILE = "windows-server-2022-standard-2601.0.0.box"
 
 Vagrant.configure("2") do |config|
   # ──────────────────────────────────────────────
@@ -40,7 +40,7 @@ Vagrant.configure("2") do |config|
   # ──────────────────────────────────────────────
   config.vm.define "windows" do |windows|
     windows.vm.box              = "gusztavvargadr/windows-server-2022-standard"
-    windows.vm.box_version      = "2202.0.2402"
+    windows.vm.box_version      = "2601.0.0"
     windows.vm.box_check_update = false
     windows.vm.box_url          = "file://#{BOX_VAULT}/#{WINDOWS_BOX_FILE}" if File.exist?("#{BOX_VAULT}/#{WINDOWS_BOX_FILE}")
     windows.vm.hostname    = "petpoll-app"

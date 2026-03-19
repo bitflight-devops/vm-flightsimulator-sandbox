@@ -11,7 +11,7 @@ This repository is a **plugin verification harness** for the [vm-blackbox Claude
 | Constant | Value | Source |
 |----------|-------|--------|
 | Ubuntu base box | `ubuntu/jammy64` v20240301.0.0 | [Vagrant Cloud](https://app.vagrantup.com/ubuntu/boxes/jammy64) |
-| Windows base box | `gusztavvargadr/windows-server-2022-standard` v2202.0.2402 | [Vagrant Cloud](https://app.vagrantup.com/gusztavvargadr/boxes/windows-server-2022-standard) |
+| Windows base box | `gusztavvargadr/windows-server-2022-standard` v2601.0.0 | [Vagrant Cloud](https://app.vagrantup.com/gusztavvargadr/boxes/windows-server-2022-standard) |
 | Ubuntu VirtualBox VM name | `petpoll-db` | Vagrantfile `vb.name`; also the VM hostname; exact value to pass as `vm_name` to all `mcp__vm-blackbox__*` tools |
 | Windows VirtualBox VM name | `petpoll-app` | Vagrantfile `vb.name`; also the VM hostname; exact value to pass as `vm_name` to all `mcp__vm-blackbox__*` tools |
 | Private network subnet | `192.168.56.0/24` | Host-only adapter |

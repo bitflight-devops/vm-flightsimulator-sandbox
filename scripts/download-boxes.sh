@@ -15,8 +15,8 @@ UBUNTU_FILE="ubuntu-jammy64-20240301.0.0.box"
 UBUNTU_SIZE_HINT="~700 MB"
 UBUNTU_MIN_BYTES=100000000 # 100 MB minimum — fail if response is an error page
 
-WINDOWS_URL="https://vagrantcloud.com/gusztavvargadr/boxes/windows-server-2022-standard/versions/2202.0.2402/providers/virtualbox.box"
-WINDOWS_FILE="windows-server-2022-standard-2202.0.2402.box"
+WINDOWS_URL="https://vagrantcloud.com/gusztavvargadr/boxes/windows-server-2022-standard/versions/2601.0.0/providers/virtualbox/amd64/vagrant.box"
+WINDOWS_FILE="windows-server-2022-standard-2601.0.0.box"
 WINDOWS_SIZE_HINT="~6 GB"
 WINDOWS_MIN_BYTES=1000000000 # 1 GB minimum — fail if response is an error page
 

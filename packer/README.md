@@ -8,7 +8,7 @@ Vagrant Cloud by default:
 | VM | Box | Version |
 |----|-----|---------|
 | ubuntu | `ubuntu/jammy64` | 20240301.0.0 |
-| windows | `gusztavvargadr/windows-server-2022-standard` | 2202.0.2402 |
+| windows | `gusztavvargadr/windows-server-2022-standard` | 2601.0.0 |
 
 `vagrant up` downloads these boxes automatically. No Packer build is needed
 for the primary workflow.
