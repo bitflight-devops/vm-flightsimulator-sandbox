@@ -90,3 +90,25 @@
     Constraints section: use vagrant_winrm for Vagrant-managed Windows VMs,
     not vm_powershell.
   fix_commit: ""
+
+- date: "2026-03-19T05:24:00Z"
+  run: v3
+  action_performed: >
+    vagrant up windows — provision-tomcat.ps1 ran service.bat install then
+    Start-Service Tomcat10
+  status: resolved
+  expected_outcome: >
+    Tomcat10 service starts successfully after installation
+  what_was_observed: >
+    Start-Service Tomcat10 failed with "Cannot start service Tomcat10 on
+    computer '.'". Windows Event Log showed error %%5 (Access Denied).
+    service.bat install registers the service as NT Authority\LocalService
+    by default. LocalService lacks permission to load the JVM DLL from
+    C:\Program Files\Eclipse Adoptium\... causing the service to fail
+    immediately on start.
+  additional_steps_taken: >
+    Applied sc.exe config Tomcat10 obj= "LocalSystem" manually on the VM.
+    Completed remaining provision steps (firewall, WAR deploy, Edge registry)
+    via vagrant_winrm. Fixed provision-tomcat.ps1 on main to add
+    sc.exe config step after service.bat install for all future runs.
+  fix_commit: "c37af00"
